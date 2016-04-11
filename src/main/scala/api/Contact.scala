@@ -7,10 +7,10 @@ package api
   *
   * This object represents a phone contact.
   *
-  * @param phoneNumber	String	Contact's phone number
-  * @param firstName	  String	Contact's first name
-  * @param lastName	    String	Optional. Contact's last name
-  * @param userId	      Integer	Optional. Contact's user identifier in Telegram
+  * @param phoneNumber    String. Contact's phone number
+  * @param firstName      String. Contact's first name
+  * @param lastName       String. Optional. Contact's last name
+  * @param userId         Integer. Optional. Contact's user identifier in Telegram
   */
 
 case class Contact(phoneNumber: String,

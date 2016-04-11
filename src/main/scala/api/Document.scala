@@ -7,11 +7,11 @@ package api
   *
   * This object represents a general file (as opposed to photos, voice messages and audio files).
   *
-  * @param fileId	  String	Unique file identifier
-  * @param thumb	  PhotoSize	Optional. Document thumbnail as defined by sender
-  * @param fileName	String	Optional. Original filename as defined by sender
-  * @param mimeType	String	Optional. MIME type of the file as defined by sender
-  * @param fileSize	Integer	Optional. File size
+  * @param fileId      String. Unique file identifier
+  * @param thumb       PhotoSize. Optional. Document thumbnail as defined by sender
+  * @param fileName    String. Optional. Original filename as defined by sender
+  * @param mimeType    String. Optional. MIME type of the file as defined by sender
+  * @param fileSize    Integer. Optional. File size
   *
   */
 

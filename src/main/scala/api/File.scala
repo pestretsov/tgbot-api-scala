@@ -12,9 +12,9 @@ package api
   *
   * Maximum file size to download is 20 MB
   *
-  * @param fileId	String	Unique identifier for this file
-  * @param fileSize	Integer	Optional. File size, if known
-  * @param filePath	String	Optional. File path. Use https://api.telegram.org/file/bot<token>/<file_path> to get the file.
+  * @param fileId      String. Unique identifier for this file
+  * @param fileSize    Integer. Optional. File size, if known
+  * @param filePath    String. Optional. File path. Use https://api.telegram.org/file/bot<token>/<file_path> to get the file.
   */
 
 case class File(fileId: String,

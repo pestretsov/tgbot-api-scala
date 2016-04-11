@@ -7,10 +7,10 @@ package api
   * Only one of the optional parameters can be present in any given update.
   **
   *
-  * @param updateId             Integer
-  * @param message              API.Message           	Optional
-  * @param inlineQuery          API.InlineQuery	        Optional
-  * @param chosenInlineResult   API.ChosenInlineResult	Optional
+  * @param updateId              Integer
+  * @param message               API.Message. Optional
+  * @param inlineQuery           API.InlineQuery. Optional
+  * @param chosenInlineResult    API.ChosenInlineResult. Optional
   *
  */
 

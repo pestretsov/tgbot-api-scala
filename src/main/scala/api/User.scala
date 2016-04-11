@@ -7,10 +7,10 @@ package api
   *
   * This object represents a Telegram user or bot.
   *
-  * @param id	Integer	Unique identifier for this user or bot
-  * @param firstName	String	User‘s or bot’s first name
-  * @param lastName	String	Optional. User‘s or bot’s last name
-  * @param username	String	Optional. User‘s or bot’s username
+  * @param id           Integer. Unique identifier for this user or bot
+  * @param firstName    String. User‘s or bot’s first name
+  * @param lastName     String. Optional. User‘s or bot’s last name
+  * @param username     String. Optional. User‘s or bot’s username
   */
 
 case class User(id: Int,
