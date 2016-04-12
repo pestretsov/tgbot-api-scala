@@ -30,5 +30,6 @@
     <orderEntry type="library" name="SBT: org.json4s:json4s-core_2.11:3.3.0:jar" level="project" />
     <orderEntry type="library" name="SBT: org.json4s:json4s-native_2.11:3.3.0:jar" level="project" />
     <orderEntry type="library" name="SBT: org.json4s:json4s-scalap_2.11:3.3.0:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.scalaj:scalaj-http_2.11:2.3.0:jar" level="project" />
   </component>
 </module>

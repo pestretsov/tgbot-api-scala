@@ -7,10 +7,10 @@ package api
   *
   * This object represents one size of a photo or a file / sticker thumbnail.
   *
-  * @param fileId	String	Unique identifier for this file
-  * @param width	Integer	Photo width
-  * @param height	Integer	Photo height
-  * @param fileSize	Integer	Optional. File size
+  * @param fileId      String. Unique identifier for this file
+  * @param width       Integer. Photo width
+  * @param height      Integer. Photo height
+  * @param fileSize    Integer. Optional. File size
   */
 
 case class PhotoSize(fileId: String,
