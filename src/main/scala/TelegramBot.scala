@@ -42,7 +42,7 @@ abstract class TelegramBot(token: String) {
   }
 }
 
-object TestBot extends TelegramBot("102590032:AAFPwqwxkce-mhNQGzZa_2kSytegVg0m6BQ") with LongPolling {
+object TestBot extends TelegramBot() with LongPolling {
   override def handleUpdate(update: Update) = {
     println(update)
   }
