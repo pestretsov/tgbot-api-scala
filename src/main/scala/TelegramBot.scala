@@ -51,5 +51,6 @@ object TestBot extends TelegramBot("102590032:AAFPwqwxkce-mhNQGzZa_2kSytegVg0m6B
 object Main {
   def main(args: Array[String]) {
     TestBot.run()
+
   }
 }
