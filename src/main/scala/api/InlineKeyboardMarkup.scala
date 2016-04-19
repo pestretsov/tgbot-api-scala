@@ -12,4 +12,6 @@ package api
   * @param inlineKeyboard    Array of Array of InlineKeyboardButton. Array of button rows, each represented by an Array of InlineKeyboardButton objects
   */
 
-case class InlineKeyboardMarkup(inlineKeyboard: Array[Array[InlineKeyboardButton]])
+case class InlineKeyboardMarkup(
+                                 inlineKeyboard: Array[Array[InlineKeyboardButton]]
+                               )

@@ -13,8 +13,9 @@ package api
   * @param foursquareId        String. Optional. Foursquare identifier of the venue
   */
 
-case class Venue(location: Location,
-                 title: String,
-                 address: String,
-                 foursquareId: Option[String] = None
+case class Venue(
+                  location: Location,
+                  title: String,
+                  address: String,
+                  foursquareId: Option[String] = None
                 )

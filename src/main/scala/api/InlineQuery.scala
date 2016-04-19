@@ -14,9 +14,10 @@ package api
   * @param offset      String. Offset of the results to be returned, can be controlled by the bot
   */
 
-case class InlineQuery(id: String,
-                       from: User,
-                       location: Option[Location],
-                       query: String,
-                       offset: String
+case class InlineQuery(
+                        id: String,
+                        from: User,
+                        location: Option[Location] = None,
+                        query: String,
+                        offset: String
                       )

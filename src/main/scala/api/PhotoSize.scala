@@ -13,8 +13,9 @@ package api
   * @param fileSize    Integer. Optional. File size
   */
 
-case class PhotoSize(fileId: String,
-                     width: Int,
-                     height: Int,
-                     fileSize: Option[Int] = None
+case class PhotoSize(
+                      fileId: String,
+                      width: Int,
+                      height: Int,
+                      fileSize: Option[Int] = None
                     )

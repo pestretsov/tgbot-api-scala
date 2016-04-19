@@ -15,10 +15,11 @@ package api
   * @param fileSize     Integer. Optional. File size
   */
 
-case class Audio(fileId: String,
-                 duration: Int,
-                 performer: Option[String] = None,
-                 title: Option[String] = None,
-                 mimeType: Option[String] = None,
-                 fileSize: Option[Int] = None
+case class Audio(
+                  fileId: String,
+                  duration: Int,
+                  performer: Option[String] = None,
+                  title: Option[String] = None,
+                  mimeType: Option[String] = None,
+                  fileSize: Option[Int] = None
                 )

@@ -14,9 +14,10 @@ package api
   * @param query              String. The query that was used to obtain the result.
   */
 
-case class ChosenInlineResult(resultId: String,
-                              from: User,
-                              location: Option[Location],
-                              inlineMessageId: Option[String],
-                              query: String
+case class ChosenInlineResult(
+                               resultId: String,
+                               from: User,
+                               location: Option[Location] = None,
+                               inlineMessageId: Option[String] = None,
+                               query: String
                              )

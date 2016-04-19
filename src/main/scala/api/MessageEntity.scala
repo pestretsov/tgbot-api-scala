@@ -13,8 +13,9 @@ package api
   * @param url       String. Optional. For “text_link” only, url that will be opened after user taps on the text
   */
 
-case class MessageEntity(`type`: String,
-                         offset: Int,
-                         length: Int,
-                         url: Option[String] = None
+case class MessageEntity(
+                          `type`: String,
+                          offset: Int,
+                          length: Int,
+                          url: Option[String] = None
                         )

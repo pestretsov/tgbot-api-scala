@@ -9,6 +9,8 @@ import scalaj.http._
 import asynchttp.AsyncHttp._
 import org.json4s.JsonAST.JValue
 
+import scala.concurrent.Future
+
 import scala.util.{Failure, Success}
 
 /**
@@ -43,14 +45,13 @@ abstract class TelegramBot(token: String) {
 }
 
 object TestBot extends TelegramBot("102590032:AAFPwqwxkce-mhNQGzZa_2kSytegVg0m6BQ") with LongPolling {
+
+  def main(args: Array[String]) {
+    run()
+  }
+
   override def handleUpdate(update: Update) = {
     println(update)
   }
 }
 
-object Main {
-  def main(args: Array[String]) {
-    TestBot.run()
-
-  }
-}

@@ -14,9 +14,10 @@ package api
   * @param data	              String. Data associated with the callback button. Be aware that a bad client can send arbitrary data in this field
   */
 
-case class CallbackQuery(id: String,
-                         from: User,
-                         message: Option[Message] = None,
-                         inlineMessageId: Option[String] = None,
-                         data: String
+case class CallbackQuery(
+                          id: String,
+                          from: User,
+                          message: Option[Message] = None,
+                          inlineMessageId: Option[String] = None,
+                          data: String
                         )

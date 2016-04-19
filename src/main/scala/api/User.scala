@@ -13,8 +13,9 @@ package api
   * @param username     String. Optional. User‘s or bot’s username
   */
 
-case class User(id: Int,
-                firstName: String,
-                lastName: Option[String] = None,
-                username: Option[String] = None
+case class User(
+                 id: Int,
+                 firstName: String,
+                 lastName: Option[String] = None,
+                 username: Option[String] = None
                )

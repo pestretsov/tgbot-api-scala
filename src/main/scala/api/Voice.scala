@@ -13,8 +13,9 @@ package api
   * @param fileSize 	 Integer. Optional. File size
   */
 
-case class Voice(fileId: String,
-                 duration: Int,
-                 mimeType: Option[String] = None,
-                 fileSize: Option[Int] = None
+case class Voice(
+                  fileId: String,
+                  duration: Int,
+                  mimeType: Option[String] = None,
+                  fileSize: Option[Int] = None
                 )

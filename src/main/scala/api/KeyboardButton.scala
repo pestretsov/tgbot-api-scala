@@ -14,7 +14,8 @@ package api
   * @param requestLocation    Boolean. Optional. If True, the user's current location will be sent when the button is pressed. Available in private chats only
   */
 
-case class KeyboardButton(text: String,
-                          requestContact: Option[Boolean] = None,
-                          requestLocation: Option[Boolean] = None
+case class KeyboardButton(
+                           text: String,
+                           requestContact: Option[Boolean] = None,
+                           requestLocation: Option[Boolean] = None
                          )
