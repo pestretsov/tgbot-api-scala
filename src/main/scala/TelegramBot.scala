@@ -44,7 +44,7 @@ abstract class TelegramBot(token: String) {
   }
 }
 
-object TestBot extends TelegramBot("102590032:AAFPwqwxkce-mhNQGzZa_2kSytegVg0m6BQ") with LongPolling {
+object TestBot extends TelegramBot("------put your token here------") with LongPolling {
 
   def main(args: Array[String]) {
     run()
