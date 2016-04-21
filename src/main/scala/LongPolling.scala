@@ -14,7 +14,8 @@ trait LongPolling extends Runnable { this : TelegramBot =>
 
     while (true) {
 
-      println(Thread.currentThread().getName)
+      println("loop: " + Thread.currentThread().getName)
+
       val updatesFuture = getUpdates(offset = Some(updateOffset))
 
       updatesFuture onSuccess {
@@ -25,12 +26,11 @@ trait LongPolling extends Runnable { this : TelegramBot =>
             updateOffset = updateOffset max u.updateId+1
           }
       }
-
       updatesFuture onFailure {
         case e => println("Error" + e.getMessage)
       }
 
-      Thread.sleep(3000)
+      Thread.sleep(1500)
     }
   }
 }
