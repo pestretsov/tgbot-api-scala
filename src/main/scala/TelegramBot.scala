@@ -29,18 +29,24 @@ abstract class TelegramBot(token: String) {
   def handleUpdate(update: Update)
 
 
-
   def proceedRequest[T: Manifest](method: String, params: (String, Any)*): T = {
     implicit val formats = DefaultFormats
 
+    val request = params.foldLeft(Http(method).header("content-type", "application/json")) {
+      case (req, (name, value)) => value match {
+        case Some(v) => req.param(name, v.toString)
+        case None => req
+        case _ => req.param(name, value.toString)
+      }
+    }
 
-    val json = Serialization.write(params)
-    println(json)
-    val response = parse(Http(method).header("content-type", "application/json")
-                            .postData(compact(render(json)))
-                            .asString.body
-                        )
-    (response\"result").camelizeKeys.extract[T]
+    val response = request.asString
+    if (response.isSuccess) {
+      val json = parse(response.body)
+      (json \ "result").camelizeKeys.extract[T]
+    } else {
+      throw new Exception
+    }
   }
 
   def getUpdates(offset: Option[Int] = None,
@@ -58,25 +64,29 @@ abstract class TelegramBot(token: String) {
                    disableNotification:      Option[Boolean] = None,
                    replyToMessageId:         Option[Integer] = None,
                    replyMarkup:              Option[ReplyMarkup] = None
-                 ): Unit = {
-    proceedRequest(ApiMethods.sendMessage, ("chat_id", chatId), ("text", text))
+                 ): Unit = Future {
+
+    proceedRequest(ApiMethods.sendMessage,
+      ("chat_id", chatId), ("text", text), ("parse_mode", parseMode), ("disable_web_page_preview", disableWebPagePreview),
+      ("disable_notification", disableNotification), ("reply_to_message_id", replyToMessageId), ("reply_markup", replyMarkup))
   }
 }
 
-object TestBot extends TelegramBot("------put your token here------") with LongPolling {
+object TestBot extends TelegramBot("102590032:AAFPwqwxkce-mhNQGzZa_2kSytegVg0m6BQ") with LongPolling {
 
   def main(args: Array[String]) {
     run()
   }
 
   override def handleUpdate(update: Update) = Future {
-    println("handleUpdate: " + update)
-//    println(update)
+    println("handleUpdate: " + update.updateId)
+//    println("handleUpdate: " + update)
+////    println(update)
     if (update.message.get.text.get.equals("656")) {
       sendMessage(update.message.get.chat.id, "Hello!")
 //      println(update.message.get.chat.firstName)
     }
-    Thread.sleep(2000)
+//    Thread.sleep(2000)
   }
 }
 

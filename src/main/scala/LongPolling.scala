@@ -18,14 +18,23 @@ trait LongPolling extends Runnable { this : TelegramBot =>
 
       val updatesFuture = getUpdates(offset = Some(updateOffset))
 
-      updatesFuture onSuccess {
-        case Array() =>
-        case updates =>
-          for (u <- updates) {
-            handleUpdate(u)
-            updateOffset = updateOffset max u.updateId+1
-          }
+      for (u <- updatesFuture) {
+        for (update <- u) {
+          updateOffset = updateOffset max update.updateId+1
+          handleUpdate(update)
+        }
       }
+      println(updateOffset)
+
+//      updatesFuture onSuccess {
+//        case Array() =>
+//        case updates =>
+//          for (u <- updates) {
+//            updateOffset = updateOffset max u.updateId+1
+//            println("updatesLoop: " + Thread.currentThread().getName)
+//            handleUpdate(u)
+//          }
+//      }
       updatesFuture onFailure {
         case e => println("Error" + e.getMessage)
       }
