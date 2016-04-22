@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/projecthype.iml" filepath="$PROJECT_DIR$/.idea/modules/projecthype.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/projecthype-build.iml" filepath="$PROJECT_DIR$/.idea/modules/projecthype-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tgbot-api-scala.iml" filepath="$PROJECT_DIR$/.idea/modules/tgbot-api-scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tgbot-api-scala-build.iml" filepath="$PROJECT_DIR$/.idea/modules/tgbot-api-scala-build.iml" />
     </modules>
   </component>
 </project>
