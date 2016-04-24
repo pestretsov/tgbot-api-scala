@@ -11,6 +11,3 @@ libraryDependencies ++= Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "org.scalaj" %% "scalaj-http" % "2.3.0"
 )
-
-
-

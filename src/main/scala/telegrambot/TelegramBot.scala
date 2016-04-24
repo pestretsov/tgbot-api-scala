@@ -18,6 +18,9 @@ abstract class TelegramBot(TOKEN : String) (implicit val context: ExecutionConte
   object Client extends TelegramApiClient(apiUrl)
 
   implicit val jsonFormats = DefaultFormats
+  implicit class OptionPimp[T](t:T){
+    def some: Option[T] = Some(t)
+  }
 
   def handleUpdate(u: Update): Future[Any]
 }

@@ -5,10 +5,6 @@ package telegrambot
   */
 trait LongPolling { this:TelegramBot =>
 
-  implicit class OptionPimp[T](t:T){
-    def some: Option[T] = Some(t)
-  }
-
   val pollTimeout = 3 some
   val pollLimit = 100 some
   var pollOffset:Option[Int] = 0 some
@@ -19,7 +15,7 @@ trait LongPolling { this:TelegramBot =>
     poll.foreach{updates =>
       pollOffset = updates match {
         case List() => pollOffset
-        case list => (list.map(_.updateId).max+1).some
+        case list => (list.map(_.updateId).max+1) some
       }
 
       updates.foreach(handleUpdate _ )
@@ -28,7 +24,8 @@ trait LongPolling { this:TelegramBot =>
     }
 
     poll.onFailure{
-      case _ => startPoll()
+      case err => logger.debug("Error while polling", err)
+        startPoll()
     }
   }
 

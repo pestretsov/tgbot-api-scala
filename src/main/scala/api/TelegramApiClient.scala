@@ -1,14 +1,15 @@
 package api
 
-import org.json4s.DefaultFormats
-import org.json4s.JsonAST.{JNothing, JObject, JValue}
+import java.io.FileInputStream
+import java.nio.file.Files
 
-import scala.concurrent.{Await, ExecutionContext, Future}
-import scalaj.http.{Http, HttpRequest, HttpResponse}
+import org.slf4j.LoggerFactory
+
+import org.json4s._
 import org.json4s.native.JsonMethods._
-import org.json4s.JsonDSL._
-import org.json4s.native.Serialization
-import org.slf4j.{Logger, LoggerFactory}
+
+import scala.concurrent.{ExecutionContext, Future}
+import scalaj.http.{Http, MultiPart}
 /**
   * Created by roman on 15.04.2016.
   */
@@ -21,13 +22,31 @@ object ChatId {
   implicit def string2chatId(id: String):ChatId = ChatId(id)
 }
 
+case class ClientFile(file: Any)
+case object ClientFile {
+  implicit def string2chatId(id: String): ClientFile = ClientFile(id)
+  implicit def inputFile2chatId(file: InputFile): ClientFile = ClientFile(file)
+}
+
+object JsonUtils {
+  import org.json4s.NoTypeHints
+  import org.json4s.native.Serialization
+  import org.json4s.native.Serialization.write
+
+  def serialize[T<:AnyRef](t: T):String = {
+    implicit val formats = Serialization.formats(NoTypeHints)
+    write(t)
+  }
+}
+
 class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
   type Updates = List[Update]
-  implicit val jsonFormats = DefaultFormats
 
   lazy val logger = LoggerFactory.getLogger(this.getClass)
 
-  val connTimeout: Int = 1000
+  implicit val formats = DefaultFormats
+
+//  val connTimeout: Int = 1000
   val readTimeout: Int = 10000
 
   def proceedRequest[T: Manifest](method: String, args: (String, Any)*) = {
@@ -38,37 +57,52 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
     response.map(parseResponse[T](_))
   }
 
+  class ApiCallError(s: String) extends Exception(s)
   def parseResponse[T: Manifest](r: String):T = {
+    if (parse(r).\("ok").extract[Boolean]) {
       parse(r).\("result").camelizeKeys.extract[T]
+    } else throw new ApiCallError(s"Bad request: $r")
   }
 
-  def httpRequest(requestUrl: String, params: (String, Any)*):Future[String] = Future {
+  def httpRequest(method: String, params: (String, Any)*):Future[String] = Future {
 
 //      .postData(data)
 //      .asString.body
-    val req = params.foldLeft(Http(requestUrl)
-      .header("content-type", "application/json")
+    val req = params.foldLeft(Http(s"$url/$method")
       .timeout(connTimeout, readTimeout))((r, p)=> p match {
       case (id, value) => value match {
+        case f:InputFile =>
+          val stream = new FileInputStream(f.file)
+          val bytes = Files.readAllBytes(f.file.toPath)
+
+          r.postMulti(MultiPart(id, f.filename, "image/jpeg", bytes))
         case None => r
         case Some(v) => r.param(id, v.toString)
         case v => r.param(id, v.toString)
     }})
-
     req.asString.body
   }
 
 
   private object MethodsUrls {
-    val getUpdates = s"$url/getUpdates"
-    val setWebHook = s"$url/setWebhook"
-    val getMe = s"$url/getMe"
-    val sendMessage = s"$url/sendMessage"
-    val forwardMessage = s"$url/forwardMessage"
+    val getUpdates = "getUpdates"
+
+    val setWebHook = "setWebhook"
+
+    val getMe = "getMe"
+
+    val sendMessage = "sendMessage"
+    val forwardMessage = "forwardMessage"
+
+    val sendPhoto = "sendPhoto"
+    val sendAudio = "sendAudio"
+    val sendDocument= "sendDocument"
+    val sendSticker = "sendSticker"
   }
 
   /**
     * A simple method for testing your bot's auth token. Requires no parameters. Returns basic information about the bot in form of a User object.
+    *
     * @return Returns basic information about the bot in form of a User object
     */
 
@@ -119,12 +153,136 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
     * @return On success, the sent Message is returned.
     */
 
-  def forwardMessage(chatId: ChatId, fromChatId:ChatId, disableNotification:Option[Boolean]=None, messageId:Int) =
+  def forwardMessage(chatId: ChatId,
+                     fromChatId:ChatId,
+                     disableNotification:Option[Boolean]=None,
+                     messageId:Int) =
     proceedRequest[Message](MethodsUrls.forwardMessage,
       "chat_id"->chatId.id,
       "from_chat_id"->fromChatId.id,
       "disable_notifications"->disableNotification,
       "message_id"->messageId)
 
+  /**
+    * Use this method to send photos. On success, the sent Message is returned.
+    *
+    * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    * @param photo Photo to send. You can either pass a file_id as String to resend a photo that is already on the Telegram servers, or upload a new photo using multipart/form-data.
+    * @param caption Photo caption (may also be used when resending photos by file_id), 0-200 characters.
+    * @param disableNotification Sends the message silently. iOS users will not receive a notification, Android users will receive a notification with no sound.
+    * @param replyToMessageId If the message is a reply, ID of the original message
+    * @param replyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.
+    * @return On success, the sent Message is returned.
+    */
+
+  def sendPhoto(chatId: ChatId,
+                photo: ClientFile,
+                caption: Option[String]=None,
+                disableNotification:Option[Boolean]=None,
+                replyToMessageId:Option[Int]=None,
+                replyMarkup:Option[ReplyMarkup]=None) = {
+    proceedRequest[Message](MethodsUrls.sendPhoto,
+      "chat_id"->chatId.id,
+      "photo"->photo.file,
+      "caption"->caption,
+      "disable_notification"->disableNotification,
+      "reply_to_message_id"->replyToMessageId,
+      "reply_markup"->JsonUtils.serialize(replyMarkup))
+
+  }
+
+  /**
+    * Use this method to send audio files, if you want Telegram clients to display them in the music player.
+    * Your audio must be in the .mp3 format. On success, the sent Message is returned.
+    * Bots can currently send audio files of up to 50 MB in size, this limit may be changed in the future.
+    *
+    * For sending voice messages, use the sendVoice method instead.
+    *
+    * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    * @param audio Audio file to send. You can either pass a file_id as String to resend an audio that is already on the Telegram servers, or upload a new audio file using multipart/form-data.
+    * @param duration Duration of the audio in seconds
+    * @param performer Performer
+    * @param title Track name
+    * @param disableNotification Sends the message silently. iOS users will not receive a notification, Android users will receive a notification with no sound.
+    * @param replyToMessageId If the message is a reply, ID of the original message
+    * @param replyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.
+    * @return On success, the sent Message is returned.
+    */
+  def sendAudio(chatId: ChatId,
+                audio: ClientFile,
+                duration: Option[Int]=None,
+                performer: Option[String]=None,
+                title: Option[String]=None,
+                disableNotification:Option[Boolean]=None,
+                replyToMessageId:Option[Int]=None,
+                replyMarkup:Option[ReplyMarkup]=None
+               ) =
+    proceedRequest[Message](MethodsUrls.sendAudio,
+      "chat_id"->chatId.id,
+      "audio"->audio.file,
+      "duration"->duration,
+      "performer"->performer,
+      "title"->title,
+      "disable_notification"->disableNotification,
+      "reply_to_message_id"->replyToMessageId,
+      "reply_markup"->JsonUtils.serialize(replyMarkup))
+
+  /**
+    * Use this method to send general files. On success, the sent Message is returned.
+    * Bots can currently send files of any type of up to 50 MB in size, this limit may be changed in the future.
+    *
+    * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    * @param document File to send. You can either pass a file_id as String to resend a file that is already on the Telegram servers, or upload a new file using multipart/form-data.
+    * @param caption Document caption (may also be used when resending documents by file_id), 0-200 characters
+    * @param disableNotification 	Sends the message silently. iOS users will not receive a notification, Android users will receive a notification with no sound.
+    * @param replyToMessageId If the message is a reply, ID of the original message
+    * @param replyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.
+    * @return On success, the sent Message is returned.
+    */
+
+  def sendDocument(chatId: ChatId,
+                   document: ClientFile,
+                   caption: Option[String] = None,
+                   disableNotification:Option[Boolean]=None,
+                   replyToMessageId:Option[Int]=None,
+                   replyMarkup:Option[ReplyMarkup]=None
+                  ) =
+    proceedRequest[Message](MethodsUrls.sendDocument,
+      "chat_id"->chatId.id,
+      "document"->document.file,
+      "caption"->caption,
+      "disable_notification"->disableNotification,
+      "reply_to_message_id"->replyToMessageId,
+      "reply_markup"->JsonUtils.serialize(replyMarkup)
+    )
+
+  /**
+    * Use this method to send .webp stickers. On success, the sent Message is returned.
+    *
+    * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+    * @param sticker Sticker to send. You can either pass a file_id as String to resend a sticker that is already on the Telegram servers, or upload a new sticker using multipart/form-data.
+    * @param disableNotification Sends the message silently. iOS users will not receive a notification, Android users will receive a notification with no sound.
+    * @param replyToMessageId If the message is a reply, ID of the original message
+    * @param replyMarkup Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to hide reply keyboard or to force a reply from the user.
+    * @return On success, the sent Message is returned.
+    */
+
+  def sendSticker(chatId: ChatId,
+                  sticker: ClientFile,
+                  disableNotification:Option[Boolean]=None,
+                  replyToMessageId:Option[Int]=None,
+                  replyMarkup:Option[ReplyMarkup]=None
+                 ) = {
+
+    proceedRequest[Message](MethodsUrls.sendSticker,
+      "chat_id" -> chatId.id,
+      "sticker" -> sticker.file,
+      "disable_notification" -> disableNotification,
+      "reply_to_message_id" -> replyToMessageId,
+      "reply_markup" -> JsonUtils.serialize(replyMarkup)
+    )
+  }
+
+  def 
   //  def (chatId: ChatId):Future[]
 }

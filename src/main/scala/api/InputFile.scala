@@ -5,6 +5,6 @@ package api
   */
 
 // TODO:
-class InputFile {
+case class InputFile(filename: String, mime: String, file: java.io.File) {
 
 }
