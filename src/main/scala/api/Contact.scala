@@ -13,8 +13,9 @@ package api
   * @param userId         Integer. Optional. Contact's user identifier in Telegram
   */
 
-case class Contact(phoneNumber: String,
-                   firstName: String,
-                   lastName: Option[String] = None,
-                   userId: Option[Int] = None
+case class Contact(
+                    phoneNumber: String,
+                    firstName: String,
+                    lastName: Option[String] = None,
+                    userId: Option[Int] = None
                   )

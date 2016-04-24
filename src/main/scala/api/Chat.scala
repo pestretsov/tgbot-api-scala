@@ -15,10 +15,11 @@ package api
   * @param lastName     String. Optional. Last name of the other party in a private chat
   */
 
-case class Chat(id: Int,
-                `type`: String,
-                title: Option[String] = None,
-                username: Option[String] = None,
-                firstName: Option[String] = None,
-                lastName: Option[String] = None
+case class Chat(
+                 id: Int,
+                 `type`: String,
+                 title: Option[String] = None,
+                 username: Option[String] = None,
+                 firstName: Option[String] = None,
+                 lastName: Option[String] = None
                )

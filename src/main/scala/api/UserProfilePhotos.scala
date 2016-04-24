@@ -11,6 +11,7 @@ package api
   * @param photos        Array of Array of PhotoSize. Requested profile pictures (in up to 4 sizes each)
   */
 
-case class UserProfilePhotos(totalCount: Int,
-                             photos: Array[Array[PhotoSize]]
+case class UserProfilePhotos(
+                              totalCount: Int,
+                              photos: Array[Array[PhotoSize]]
                             )

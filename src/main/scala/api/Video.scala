@@ -16,11 +16,12 @@ package api
   * @param fileSize    Integer. Optional. File size
   */
 
-case class Video(fileId: String,
-                 width: Int,
-                 height: Int,
-                 duration: Int,
-                 thumb: Option[PhotoSize] = None,
-                 mimeType: Option[String] = None,
-                 fileSize: Option[Int] = None
+case class Video(
+                  fileId: String,
+                  width: Int,
+                  height: Int,
+                  duration: Int,
+                  thumb: Option[PhotoSize] = None,
+                  mimeType: Option[String] = None,
+                  fileSize: Option[Int] = None
                 )

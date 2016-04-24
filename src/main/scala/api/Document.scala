@@ -15,9 +15,10 @@ package api
   *
   */
 
-case class Document(fileId: String,
-                    thumb: Option[PhotoSize] = None,
-                    fileName: Option[String] = None,
-                    mimeType: Option[String] = None,
-                    fileSize: Option[Int] = None
+case class Document(
+                     fileId: String,
+                     thumb: Option[PhotoSize] = None,
+                     fileName: Option[String] = None,
+                     mimeType: Option[String] = None,
+                     fileSize: Option[Int] = None
                    )

@@ -11,6 +11,7 @@ package api
   * @param latitude	    Float. Latitude as defined by sender
   */
 
-case class Location(longitude: Float,
-                    latitude: Float
+case class Location(
+                     longitude: Float,
+                     latitude: Float
                    )

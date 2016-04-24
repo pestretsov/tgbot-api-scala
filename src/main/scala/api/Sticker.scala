@@ -14,9 +14,10 @@ package api
   * @param fileSize	Integer	Optional. File size
   */
 
-case class Sticker(fileId: String,
-                   width: Int,
-                   height: Int,
-                   thumb: Option[PhotoSize] = None,
-                   fileSize: Option[Int] = None
+case class Sticker(
+                    fileId: String,
+                    width: Int,
+                    height: Int,
+                    thumb: Option[PhotoSize] = None,
+                    fileSize: Option[Int] = None
                   )
