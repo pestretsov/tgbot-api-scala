@@ -33,8 +33,8 @@ object JsonUtils {
   import org.json4s.native.Serialization
   import org.json4s.native.Serialization.write
 
+  implicit val formats = Serialization.formats(NoTypeHints)
   def serialize[T<:AnyRef](t: T):String = {
-    implicit val formats = Serialization.formats(NoTypeHints)
     write(t)
   }
 }
@@ -46,7 +46,7 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
 
   implicit val formats = DefaultFormats
 
-//  val connTimeout: Int = 1000
+  val connTimeout: Int = 1000
   val readTimeout: Int = 10000
 
   def proceedRequest[T: Manifest](method: String, args: (String, Any)*) = {
@@ -84,7 +84,7 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
   }
 
 
-  private object MethodsUrls {
+  private object Methods {
     val getUpdates = "getUpdates"
 
     val setWebHook = "setWebhook"
@@ -96,8 +96,10 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
 
     val sendPhoto = "sendPhoto"
     val sendAudio = "sendAudio"
-    val sendDocument= "sendDocument"
+    val sendDocument = "sendDocument"
     val sendSticker = "sendSticker"
+    val sendVideo = "sendVideo"
+    val sendVoice = "sendVoice"
   }
 
   /**
@@ -106,7 +108,7 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
     * @return Returns basic information about the bot in form of a User object
     */
 
-  def getMe:Future[User] = proceedRequest[User](MethodsUrls.getMe)
+  def getMe:Future[User] = proceedRequest[User](Methods.getMe)
 
   /**
     * Use this method to send text messages. On success, the sent Message is returned.
@@ -127,7 +129,7 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
                   replyToMessageId: Option[Int] = None
                  ):Future[Message] = {
 
-    proceedRequest[Message](MethodsUrls.sendMessage, "chat_id" -> chatId.id,
+    proceedRequest[Message](Methods.sendMessage, "chat_id" -> chatId.id,
       "text" -> text,
       "parse_mode" -> parseMode,
       "disable_web_page_preview" -> disableWebPagePreview,
@@ -138,7 +140,7 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
   def getUpdates(offset: Option[Int] = None,
                  limit: Option[Int] = None,
                  timeout: Option[Int] = None):Future[Updates] =
-    proceedRequest[Updates](MethodsUrls.getUpdates,
+    proceedRequest[Updates](Methods.getUpdates,
       "offset" -> offset,
       "timeout" -> timeout,
       "limit" -> limit)
@@ -157,7 +159,7 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
                      fromChatId:ChatId,
                      disableNotification:Option[Boolean]=None,
                      messageId:Int) =
-    proceedRequest[Message](MethodsUrls.forwardMessage,
+    proceedRequest[Message](Methods.forwardMessage,
       "chat_id"->chatId.id,
       "from_chat_id"->fromChatId.id,
       "disable_notifications"->disableNotification,
@@ -181,7 +183,7 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
                 disableNotification:Option[Boolean]=None,
                 replyToMessageId:Option[Int]=None,
                 replyMarkup:Option[ReplyMarkup]=None) = {
-    proceedRequest[Message](MethodsUrls.sendPhoto,
+    proceedRequest[Message](Methods.sendPhoto,
       "chat_id"->chatId.id,
       "photo"->photo.file,
       "caption"->caption,
@@ -217,7 +219,7 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
                 replyToMessageId:Option[Int]=None,
                 replyMarkup:Option[ReplyMarkup]=None
                ) =
-    proceedRequest[Message](MethodsUrls.sendAudio,
+    proceedRequest[Message](Methods.sendAudio,
       "chat_id"->chatId.id,
       "audio"->audio.file,
       "duration"->duration,
@@ -247,7 +249,7 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
                    replyToMessageId:Option[Int]=None,
                    replyMarkup:Option[ReplyMarkup]=None
                   ) =
-    proceedRequest[Message](MethodsUrls.sendDocument,
+    proceedRequest[Message](Methods.sendDocument,
       "chat_id"->chatId.id,
       "document"->document.file,
       "caption"->caption,
@@ -274,7 +276,7 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
                   replyMarkup:Option[ReplyMarkup]=None
                  ) = {
 
-    proceedRequest[Message](MethodsUrls.sendSticker,
+    proceedRequest[Message](Methods.sendSticker,
       "chat_id" -> chatId.id,
       "sticker" -> sticker.file,
       "disable_notification" -> disableNotification,
@@ -283,6 +285,41 @@ class TelegramApiClient(url: String)(implicit context: ExecutionContext) {
     )
   }
 
-  def 
+  def sendVideo(chatId: ChatId,
+                video: ClientFile,
+                duration: Option[Int] = None,
+                width: Option[Int] = None,
+                height: Option[Int] = None,
+                caption: Option[String],
+                disableNotification:Option[Boolean]=None,
+                replyToMessageId:Option[Int]=None,
+                replyMarkup:Option[ReplyMarkup]=None
+                ) =
+    proceedRequest[Message](Methods.sendVideo,
+      "chat_id"->chatId.id,
+      "video"->video.file,
+      "duration"->duration,
+      "width"->width,
+      "height"->height,
+      "caption"->caption,
+      "disable_notification" -> disableNotification,
+      "reply_to_message_id" -> replyToMessageId,
+      "reply_markup" -> JsonUtils.serialize(replyMarkup)
+    )
+
+  def sendVoice(chatId: ChatId,
+                voice: ClientFile,
+                duration: Option[Int]=None,
+                disableNotification:Option[Boolean]=None,
+                replyToMessageId:Option[Int]=None,
+                replyMarkup:Option[ReplyMarkup]=None) =
+    proceedRequest[Message](Methods.sendVoice,
+      "chat_id"->chatId.id,
+      "voice"->voice.file,
+      "duration"->duration,
+      "disable_notification" -> disableNotification,
+      "reply_to_message_id" -> replyToMessageId,
+      "reply_markup" -> JsonUtils.serialize(replyMarkup)
+    )
   //  def (chatId: ChatId):Future[]
 }
